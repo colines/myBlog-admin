@@ -3,7 +3,7 @@
     <div class="login-content">
       <div class="login-box">
         <div class="div-box">
-          <p class="box-title">用户登录</p>
+          <p class="box-title">后台登录</p>
           <div class="username" :class="focusFlag == 1 ? focusClass : ''">
             <span class="iconfont">&#xe63c;</span>
             <input type="text" class="text" v-model="username" @focus="focusStyle1" @blur="blurStyle"
@@ -33,7 +33,7 @@
 <script>
   export default {
     created() {
-      
+
     },
     data() {
       return {
@@ -43,7 +43,7 @@
         pswFlag: false,
         username: '',
         password: '',
-        userInfo:'账户不为空',
+        userInfo: '账户不为空',
         pswInfo: '密码不为空',
       }
     },
@@ -60,10 +60,19 @@
         this.focusFlag = 0;
       },
       checkInfo() {
-        
+
       },
       userLogin() {
-        this.$router.push('/home/announcement');
+        let user = { //用户对象
+          uname: 'uniAdmin',
+          pwd: '123456'
+        }
+
+        // this.axios.post('/json/auth/login', this.$qs.stringify(user)).then(res => {
+        //   console.log(res);
+        //   // this.$router.push('/home/announcement');
+        // });
+        this.$router.push('/home');
       }
     },
 
@@ -76,17 +85,21 @@
     position: relative;
     height: 100vh;
     /* background: url('http://112.74.39.181:1453/img/loginBg.png') center center repeat; */
-    background: #C9EEFD;
+    background: #393D49;
   }
+
   .login-box {
     position: absolute;
-    right: 10%;
-    top: 25%;
+    right: 50%;
+    top: 50%;
     width: 360px;
     height: 320px;
-    border: 1px solid #ccc;
+    margin-right: -180px;
+    margin-top: -160px;
+    border: 1px solid #8A8C93;
     z-index: 99;
-    background: #fff;
+    background: #8A8C93;
+    border-radius: 10px;
   }
 
   .div-box {
@@ -101,15 +114,17 @@
     line-height: 25px;
     line-height: 25px;
     font-size: 18px;
-    color: #666;
+    color: #fff;;
     margin-bottom: 20px;
   }
 
   .username,
   .password {
-    height: 36px;
-    line-height: 36px;
-    border: 1px solid #ddd;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 3px;
+    border: 1px solid #fff;
+    background: #fff;
   }
 
   .username span,
@@ -122,8 +137,8 @@
 
   }
 
-  .iconfont{
-    color: rgb(194, 188, 188)!important;
+  .iconfont {
+    color: rgb(194, 188, 188) !important;
   }
 
   input::placeholder {
@@ -134,7 +149,7 @@
     float: left;
     color: #333;
     width: 240px;
-    padding: 5px;
+    padding: 10px;
   }
 
   .login-btn {
@@ -150,7 +165,7 @@
     cursor: pointer;
   }
 
-  .login-btn:hover{
+  .login-btn:hover {
     background: rgb(135, 220, 233);
   }
 
@@ -163,7 +178,7 @@
 
   .forget-psw {
     float: right;
-    color: #25a4bb;
+    color: #fff;
     cursor: pointer;
   }
 
@@ -179,7 +194,7 @@
   }
 
   .focusClass {
-    border: 1px solid #666;
+    border: 1px solid rgb(109, 111, 122);
   }
 
 </style>

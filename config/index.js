@@ -10,7 +10,17 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      // '/json': {
+      //   target: 'http://10.20.8.72:8080/json',
+      //   // target: 'https://easy-mock.com/mock/5cc534a08c029237ca1125c8/'
+      //   secure: true,
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/json': '' //需要rewrite的,
+      //   }
+      // }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -20,7 +30,7 @@ module.exports = {
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
-    
+
     /**
      * Source Maps
      */

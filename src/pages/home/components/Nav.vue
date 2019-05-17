@@ -1,10 +1,14 @@
 <template>
   <div class="nav">
-    <h4 class="nav-h4">教务管理系统</h4>
+    <h4 class="nav-h4">
+      <span class="name">Darcy</span>
+      <span class="iconfont">&#xe61c;</span>
+    </h4>
     <div class="side-bar">
       <a-menu mode="inline" theme="dark">
         <template v-for="item in navList">
           <a-menu-item v-if="!item.children" :key="item.key" @click="changeUrl(item.key)">
+            <span class="iconfont" v-html="item.iconCode"></span>
             <span>{{item.title}}</span>
           </a-menu-item>
           <sub-menu v-else :menu-info="item" :key="item.key" />
@@ -23,60 +27,71 @@
     data() {
       return {
         navList: [
-          {
-            key: 'studentLeave',//作为跳转的地址（具有语义的单词拼接）
-            title: '在线请假',
+        {
+            key: 'adminHome',
+            title: '系统首页',
+            iconCode:'&#xe603;'
           },
-          // {//一级菜单
-          //   key: 'leaveRecords',
-          //   title: '查看请假记录',
-          // },
-          // {//二级菜单
-          //   key: 'menu3',
-          //   title: 'menu3',
-          //   children: [{
-          //       key: 'menu3-item1',
-          //       title: 'menu3-item1',
-          //     },
-          //     {
-          //       key: 'menu3-item2',
-          //       title: 'menu3-item2',
-          //     },
-          //   ],
-          // },
-          // {//三级菜单
-          //   key: 'menu4',
-          //   title: 'menu4',
-          //   children: [{
-          //       key: 'menu4-item1',
-          //       title: 'menu4-item1',
-          //       children: [{
-          //           key: 'sub4-item1',
-          //           title: 'sub4-item1',
-          //         },
-          //         {
-          //           key: 'sub4-item2',
-          //           title: "sub4-item2",
-          //         },
-          //         {
-          //           key: 'sub4-item3',
-          //           title: "sub4-item3",
-          //         }
-          //       ]
-          //     },
-          //     {
-          //       key: 'menu4.2',
-          //       title: 'menu4.2',
-          //     }
-          //   ],
-          // },
-
-        ],
+          {
+            key: 'articleManage',
+            title: '博文管理',
+            iconCode:'&#xe67c;'
+          },
+          {
+            key: 'categoryManage',
+            title: '类别管理',
+            iconCode:'&#xe640;'
+          },
+          {
+            key: 'tagManage',
+            title: '标签管理',
+            iconCode:'&#xe636;'
+          },
+          {
+            key: 'commentsManger',
+            title: '评论管理',
+            iconCode:'&#xe6a7;'
+          },
+          {
+            key: 'wordsManger',
+            title: '留言管理',
+            iconCode:'&#xe61e;'
+          },
+          {
+            key: 'photoManger',
+            title: '图片管理',
+            iconCode:'&#xe615;'
+          },
+          {
+            key: 'linksManger',
+            title: '链接管理',
+            iconCode:'&#xe63e;'
+          },
+          {
+            key: 'infoManage',
+            title: '个人设置',
+            iconCode:'&#xe61b;',
+            children:[
+              {
+                key:'authorInfo',
+                title:'个人信息',
+                iconCode:'&#xe63c;'
+              },
+              {
+                key:'pswModify',
+                title:'修改密码',
+                iconCode:'&#xe64b;'
+              },
+            ]
+          }
+      ],
       }
     },
     methods: {
-      changeUrl(url){
-        this.$router.push('/home/'+url);
+      changeUrl(url) {
+        // this.$router.push({
+        //   name: url
+        // });
       }
 
     },
@@ -87,8 +102,7 @@
 
 <style scoped>
   .nav {
-    width: 15%;
-    min-width: 120px;
+    width: 16%;
     background: #2C3B48;
     color: rgba(255, 255, 255, .8);
     position: fixed;
@@ -99,14 +113,23 @@
   }
 
   .nav-h4 {
-    width: 100%;
     height: 59px;
-    min-width: 120px;
     line-height: 59px;
     text-align: center;
-    color: #fff;
-    font-weight: bold;
+    font-weight: 600;
     border-bottom: 1px solid #4b545c;
+    background: #3C434D;
+  }
+  .nav-h4 .name{
+    font-size: 20px;
+    color: rgb(241, 236, 236);
+  }
+
+  .nav-h4 .iconfont{
+    font-size: 25px;
+    margin-left: 10px;
+    font-weight: 600;
+    color: #8DA8FF;
   }
 
   .side-bar {
@@ -115,11 +138,14 @@
     min-width: 120px;
     overflow-y: scroll;
     overflow-x: hidden;
-    padding-bottom: 50%;
+    background: #2C343F;
   }
 
   .ant-menu {
-    background: #2C3B48 !important;
+    background: #2C343F !important;
+  }
+  .iconfont{
+    margin-right: 10px;
   }
 
 </style>

@@ -1,7 +1,7 @@
 # Educational_Administration
 
 #### Description
-教务管理系统
+个人技术博客后台管理
 
 #### Software Architecture
 Software architecture description

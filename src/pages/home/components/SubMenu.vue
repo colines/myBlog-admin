@@ -5,6 +5,7 @@
       v-on="$listeners"
     >
       <span slot="title">
+        <span class="iconfont" v-html="menuInfo.iconCode"></span>
         <span>{{ menuInfo.title }}</span>
       </span>
       <template v-for="item in menuInfo.children">
@@ -13,6 +14,7 @@
           :key="item.key"
           @click="changeUrl(item.key)"
         >
+        <span class="iconfont" v-html="item.iconCode"></span>
           <span>{{ item.title }}</span>
         </a-menu-item>
         <sub-menu
@@ -37,8 +39,14 @@
     },
     methods: {
       changeUrl(url){
-       this.$router.push('/home/'+url);F
+      //  this.$router.push({name:url});
       }
     },
   };
   </script>
+
+  <style scoped>
+  .ant-menu-submenu-title .iconfont{
+    margin-right: 12px !important;
+  }
+  </style>

@@ -1,16 +1,24 @@
 <template>
   <div class="header">
     <div class="info">
-      <p class="name"><span>name</span> | <a>注销</a></p>
+      <div class="info-box" @mouseover="settingShow" @mouseout="settingHide">
+        <div class="info-img">
+          <img src="../../../../static/Davi.jpg" alt="">
+        </div>
+      </div>
+        <div class="setting" v-show="isShow" @mouseover="settingShow" @mouseout="settingHide">
+          <a href="">设置</a>
+          <a href="">退出</a>
+        </div>
       <ul>
         <li>
           <a-badge dot>
-            <span class="iconfont" title="公告">&#xe600;</span>
+            <span class="iconfont" title="留言">&#xe61e;</span>
           </a-badge>
         </li>
         <li>
           <a-badge :count="2">
-            <span class="iconfont " title="消息">&#xe617;</span>
+            <span class="iconfont " title="评论">&#xe6a7;</span>
           </a-badge>
         </li>
       </ul>
@@ -20,6 +28,19 @@
 
 <script>
   export default {
+    data() {
+      return {
+        isShow: false,
+      }
+    },
+    methods: {
+      settingShow() {
+        this.isShow = true;
+      },
+      settingHide() {
+        this.isShow = false;
+      }
+    },
 
   }
 
@@ -27,13 +48,19 @@
 
 <style scoped>
   .header {
-    width: 85%;
+    width: 84%;
     height: 59px;
     background: #fff;
     position: fixed;
     right: 0;
     top: 0;
-    box-shadow:0px 10px 10px rgba(0, 0, 0, 0.06);
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.06);
+    z-index: 99;
+  }
+
+
+  .info {
+    position: relative;
   }
 
   .info ul li {
@@ -41,32 +68,64 @@
     width: 5%;
     height: 50px;
     line-height: 50px;
+    margin-top: 8px;
   }
 
-  .name {
+  .info-box{
     float: right;
-    font-size: 14px;
-    height: 50px;
-    line-height: 50px;
-    margin-right: 10%;
+    width: 40px;
+    height: 60px;
+    margin: 8px 120px 0 0;
+    z-index: 99;
+  }
+  .info-img {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
   }
 
-  .name span {
-    margin-right: 5px;
+  .info-img img {
+    width: 100%;
+  }
+  .setting {
+    position: absolute;
+    top: 50px;
+    right: 100px;
+    width: 80px;
+    height: 95px;
+    background: #fff;
+    border-color: #ddd;
+    border-radius: 2px;
+    padding-top: 15px;
+    z-index: 1;
   }
 
-  .name a {
-    margin-left: 5px;
+  .setting a {
+    display: block;
+    width: 80px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    color: #333;
+    cursor: pointer;
   }
+
+  .setting a:hover {
+    color: #f00;
+  }
+
 
   .iconfont {
     font-size: 20px;
     color: #888;
+    cursor: pointer;
   }
 
   .iconfont:hover {
-    cursor: pointer;
-    color: rgb(29, 33, 37);
+    font-size: 25px;
   }
 
 </style>
