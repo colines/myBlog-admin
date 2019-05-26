@@ -6,7 +6,9 @@ import router from './router'
 import axios from 'axios'
 import qs from 'qs'
 import {Menu,Icon,Badge,message,Button,Table,Input,
-        Radio,Modal,Tree,Transfer,Calendar,Select,DatePicker,Upload} from 'ant-design-vue'
+        Radio,Modal,Tree,Transfer,Calendar,Select,DatePicker,
+        Upload,Switch,Pagination,Popover,Drawer,Card,List,Avatar,
+        Spin,Collapse,Comment} from 'ant-design-vue'
 import "./assets/styles/css/reset.css"
 import "./assets/styles/css/iconfont.css"
 import './assets/styles/css/content.css'
@@ -26,9 +28,19 @@ Vue.use(Calendar);
 Vue.use(Select);
 Vue.use(DatePicker);
 Vue.use(Upload);
+Vue.use(Switch);
+Vue.use(Pagination);
+Vue.use(Popover);
+Vue.use(Drawer);
+Vue.use(Card);
+Vue.use(List);
+Vue.use(Avatar);
+Vue.use(Spin);
+Vue.use(Collapse);
+Vue.use(Comment);
 Vue.prototype.$message = message
 Vue.config.productionTip = false
-axios.defaults.withCredentials = true //解决sessionId不一致问题：跨域共享session
+// axios.defaults.withCredentials = true //解决sessionId不一致问题：跨域共享session
 Vue.prototype.qs = qs                //qs.stringify()将对象 序列化成URL的形式，以&进行拼接
 Vue.prototype.axios = axios
 

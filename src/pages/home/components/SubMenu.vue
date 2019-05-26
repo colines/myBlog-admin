@@ -39,7 +39,8 @@
     },
     methods: {
       changeUrl(url){
-      //  this.$router.push({name:url});
+       this.$router.push({name:url});
+       
       }
     },
   };

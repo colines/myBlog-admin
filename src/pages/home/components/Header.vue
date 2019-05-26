@@ -1,14 +1,20 @@
 <template>
   <div class="header">
-    <div class="info">
+    <div class="left-info">
+       <div class="search">
+         <input type="text" placeholder="博文关键词">
+         <span class="iconfont">&#xe616;</span>
+       </div>
+    </div>
+    <div class="right-info">
       <div class="info-box" @mouseover="settingShow" @mouseout="settingHide">
         <div class="info-img">
           <img src="../../../../static/Davi.jpg" alt="">
         </div>
       </div>
         <div class="setting" v-show="isShow" @mouseover="settingShow" @mouseout="settingHide">
-          <a href="">设置</a>
-          <a href="">退出</a>
+          <router-link tag="span" to="adminInfo">设置</router-link>
+          <span @click="logout">退出</span>
         </div>
       <ul>
         <li>
@@ -31,6 +37,7 @@
     data() {
       return {
         isShow: false,
+        collapsed:false,
       }
     },
     methods: {
@@ -39,6 +46,9 @@
       },
       settingHide() {
         this.isShow = false;
+      },
+      logout(){
+        this.$router.push('/');
       }
     },
 
@@ -57,13 +67,34 @@
     box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.06);
     z-index: 99;
   }
+  .left-info{
+    float: left;
+    border-bottom:1px solid #eee;
+    width: 300px;
+    height: 30px;
+    line-height: 30px;
+    margin:15px 0 0 30px;;
+  }
+  input[type="text"]{
+    width: 250px;
+    padding: 1px 0 2px 10px;
+    color: #666;
+  }
+  input::placeholder{
+    color: #999;
+  }
+  .left-info .iconfont{
+    color:#1890FF;
+    font-size: 20px;
+  }
+ 
 
 
-  .info {
+  .right-info {
     position: relative;
   }
 
-  .info ul li {
+  .right-info ul li {
     float: right;
     width: 5%;
     height: 50px;
@@ -103,7 +134,7 @@
     z-index: 1;
   }
 
-  .setting a {
+  .setting span {
     display: block;
     width: 80px;
     height: 35px;
@@ -113,18 +144,18 @@
     cursor: pointer;
   }
 
-  .setting a:hover {
+  .setting span:hover {
     color: #f00;
   }
 
 
-  .iconfont {
+  .right-info .iconfont {
     font-size: 20px;
     color: #888;
     cursor: pointer;
   }
 
-  .iconfont:hover {
+  .right-info .iconfont:hover {
     font-size: 25px;
   }
 

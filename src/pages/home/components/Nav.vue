@@ -5,7 +5,7 @@
       <span class="iconfont">&#xe61c;</span>
     </h4>
     <div class="side-bar">
-      <a-menu mode="inline" theme="dark">
+      <a-menu mode="inline" theme="dark" :defaultSelectedKeys="[selectedKey]">
         <template v-for="item in navList">
           <a-menu-item v-if="!item.children" :key="item.key" @click="changeUrl(item.key)">
             <span class="iconfont" v-html="item.iconCode"></span>
@@ -24,61 +24,65 @@
     components: {
       'sub-menu': SubMenu,
     },
+    created() {
+      this.selectedKey = this.$route.name;//页面刷新获取地址的name属性，导航选中该name属性对应的菜单项
+    },
     data() {
       return {
+        selectedKey:'homePage',//导航默认中系统首页
         navList: [
         {
-            key: 'adminHome',
+            key: 'homePage',
             title: '系统首页',
             iconCode:'&#xe603;'
           },
           {
-            key: 'articleManage',
+            key: 'article',
             title: '博文管理',
             iconCode:'&#xe67c;'
           },
           {
-            key: 'categoryManage',
+            key: 'category',
             title: '类别管理',
             iconCode:'&#xe640;'
           },
           {
-            key: 'tagManage',
+            key: 'tag',
             title: '标签管理',
             iconCode:'&#xe636;'
           },
           {
-            key: 'commentsManger',
+            key: 'comments',
             title: '评论管理',
             iconCode:'&#xe6a7;'
           },
           {
-            key: 'wordsManger',
+            key: 'leavewords',
             title: '留言管理',
             iconCode:'&#xe61e;'
           },
           {
-            key: 'photoManger',
+            key: 'photo',
             title: '图片管理',
             iconCode:'&#xe615;'
           },
           {
-            key: 'linksManger',
+            key: 'links',
             title: '链接管理',
             iconCode:'&#xe63e;'
           },
           {
-            key: 'infoManage',
+            key: 'info',
             title: '个人设置',
             iconCode:'&#xe61b;',
             children:[
               {
-                key:'authorInfo',
+                key:'adminInfo',
                 title:'个人信息',
                 iconCode:'&#xe63c;'
               },
               {
-                key:'pswModify',
+                key:'pwdModify',
                 title:'修改密码',
                 iconCode:'&#xe64b;'
               },
@@ -89,11 +93,10 @@
     },
     methods: {
       changeUrl(url) {
-        // this.$router.push({
-        //   name: url
-        // });
-      }
-
+        this.$router.push({
+          name: url
+        });
+      },
     },
 
   }
@@ -101,6 +104,7 @@
 </script>
 
 <style scoped>
+  
   .nav {
     width: 16%;
     background: #2C3B48;

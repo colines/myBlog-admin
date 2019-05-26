@@ -72,7 +72,7 @@
         //   console.log(res);
         //   // this.$router.push('/home/announcement');
         // });
-        this.$router.push('/home');
+        this.$router.push('/home/homePage');
       }
     },
 
@@ -84,7 +84,6 @@
   .login-content {
     position: relative;
     height: 100vh;
-    /* background: url('http://112.74.39.181:1453/img/loginBg.png') center center repeat; */
     background: #393D49;
   }
 
@@ -123,8 +122,8 @@
     height: 40px;
     line-height: 40px;
     border-radius: 3px;
-    border: 1px solid #fff;
     background: #fff;
+    border:1px solid #fff;
   }
 
   .username span,
@@ -180,6 +179,9 @@
     float: right;
     color: #fff;
     cursor: pointer;
+  }
+  .forget-psw:hover{
+    text-decoration:underline;
   }
 
   .info {
