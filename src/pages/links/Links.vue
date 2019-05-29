@@ -27,11 +27,11 @@
           :afterClose ="afterModalClose" class="link-modal">
           <p>
             <label for="link-name">名称</label>
-            <a-input style="width:200px;margin-left:20px;" id="link-name" v-model="linkName" />
+            <a-input style="width:200px;margin-left:20px;" id="link-name" v-model="linkName" spellcheck="false"/>
           </p>
           <p>
             <label for="lin-url" class="link-url">地址</label>
-            <a-input style="width:200px;margin-left:20px;" id="link-url" v-model="linkUrl" :spellCheck="false" />
+            <a-input style="width:200px;margin-left:20px;" id="link-url" v-model="linkUrl"  spellcheck="false"/>
           </p>
           <p>
             <span class="img-left">图标</span>
@@ -105,49 +105,49 @@
         linkList: [{
             key: 0,
             linkName: 'github',
-            iconSrc: '../../../static/github.svg',
+            iconSrc: './static/github.svg',
             linkUrl: 'http://baidu.com',
             status: 1,
           },
           {
             key: 1,
             linkName: '掘金',
-            iconSrc: '../../../static/juejin.jpg',
+            iconSrc: './static/juejin.jpg',
             linkUrl: 'http://baidu.com',
             status: 1,
           },
           {
             key: 2,
             linkName: 'stackOverFlow',
-            iconSrc: '../../../static/stackOverflow.jpg',
+            iconSrc: './static/stackOverflow.jpg',
             linkUrl: 'http://baidu.com',
             status: 0,
           },
           {
             key: 3,
             linkName: '思否',
-            iconSrc: '../../../static/sf.jpg',
+            iconSrc: './static/sf.jpg',
             linkUrl: 'http://baidu.com',
             status: 1,
           },
           {
             key: 4,
             linkName: 'w3cschool',
-            iconSrc: '../../../static/w3cschool.jpg',
+            iconSrc: './static/w3cschool.jpg',
             linkUrl: 'http://baidu.com',
             status: 0,
           },
           {
             key: 5,
             linkName: 'csdn',
-            iconSrc: '../../../static/csdn.jpg',
+            iconSrc: './static/csdn.jpg',
             linkUrl: 'http://baidu.com',
             status: 1,
           },
           {
             key: 6,
             linkName: '阿里巴巴矢量图标库',
-            iconSrc: '../../../static/ali.jpg',
+            iconSrc: './static/ali.jpg',
             linkUrl: 'http://baidu.com',
             status: 1,
           }

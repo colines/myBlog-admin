@@ -16,6 +16,12 @@ module.exports = {
   entry: {
     app: './src/main.js'
   },
+  externals:{
+    'vue': 'Vue',
+    'axios': 'axios',
+    'qs':'qs',
+    'marked':'marked'
+  },
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
@@ -81,11 +87,6 @@ module.exports = {
     child_process: 'empty'
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jquery: 'jquery',
-      'window.jQuery': 'jquery',
-      jQuery: 'jquery'
-    })
+    new webpack.ProvidePlugin({})
   ]
 }

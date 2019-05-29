@@ -14,9 +14,13 @@
               <span slot="datetime">1天前</span>
               <a-avatar slot="avatar" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
                 alt="Han Solo" />
-              <p slot="content">你太帅了</p>
+              <p slot="content">have a good day</p>
               <span slot="actions">回复</span>
-              <span slot="actions">删除</span>
+              <span slot="actions">
+                <a-popconfirm title="是否确定删除?" @confirm="confirmDelComments" okText="是" cancelText="否">
+                  <span>删除</span>
+                </a-popconfirm>
+              </span>
               <a-comment>
                 <span slot="author">
                   <span>李四</span>
@@ -27,10 +31,14 @@
                 <p slot="content" class="comment-content">
                   <span>回复&nbsp;</span>
                   <span>张三</span>
-                  <span classs="reply-content">：我知道 </span>
+                  <span classs="reply-content">：thank you! </span>
                 </p>
                 <span slot="actions">回复</span>
-                <span slot="actions">删除</span>
+                <span slot="actions">
+                  <a-popconfirm title="是否确定删除?" @confirm="confirmDelComments" okText="是" cancelText="否">
+                    <span>删除</span>
+                  </a-popconfirm>
+                </span>
               </a-comment>
               <a-comment>
                 <span slot="author">
@@ -42,10 +50,14 @@
                 <p slot="content" class="comment-content">
                   <span>回复&nbsp;</span>
                   <span>李四</span>
-                  <span classs="reply-content">：我比你帅 </span>
+                  <span classs="reply-content">：I will </span>
                 </p>
                 <span slot="actions">回复</span>
-                <span slot="actions">删除</span>
+                <span slot="actions">
+                  <a-popconfirm title="是否确定删除?" @confirm="confirmDelComments" okText="是" cancelText="否">
+                    <span>删除</span>
+                  </a-popconfirm>
+                </span>
               </a-comment>
             </a-comment>
           </a-collapse-panel>
@@ -58,8 +70,7 @@
   export default {
     data() {
       return {
-        list: [
-          {
+        list: [{
             key: '0'
           },
           {
@@ -87,6 +98,9 @@
       },
       hh() {
 
+      },
+      confirmDelComments() {
+        this.$message.success('删除成功')
       }
     },
     watch: {

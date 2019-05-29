@@ -98,7 +98,7 @@
       },
       getinfo(value, render) {
         this.renderVal = marked(value);
-        // console.log(this.renderVal)
+        console.log(this.renderVal)
       },
       postMessage() {
         // console.log('--------------------------------------')

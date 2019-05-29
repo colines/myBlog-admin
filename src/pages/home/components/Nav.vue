@@ -7,7 +7,7 @@
     <div class="side-bar">
       <a-menu mode="inline" theme="dark" :defaultSelectedKeys="[selectedKey]">
         <template v-for="item in navList">
-          <a-menu-item v-if="!item.children" :key="item.key" @click="changeUrl(item.key)">
+          <a-menu-item v-if="!item.children" :key="item.key" @click="changeUrl(item.key)" :disabled="item.key == 'tag'">
             <span class="iconfont" v-html="item.iconCode"></span>
             <span>{{item.title}}</span>
           </a-menu-item>

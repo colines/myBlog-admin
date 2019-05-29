@@ -9,7 +9,7 @@
     <div class="right-info">
       <div class="info-box" @mouseover="settingShow" @mouseout="settingHide">
         <div class="info-img">
-          <img src="../../../../static/Davi.jpg" alt="">
+          <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847245158&di=7d375f370cd1fa2eab45a3b59b0baa1c&imgtype=0&src=http%3A%2F%2Flkker-10041312.file.myqcloud.com%2FImages%2F201902%2FgVaG15512595824319.jpg" alt="">
         </div>
       </div>
         <div class="setting" v-show="isShow" @mouseover="settingShow" @mouseout="settingHide">

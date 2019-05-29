@@ -1,28 +1,30 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/pages/login/Login'
 import Home from '@/pages/home/Home'
-import HomePage from '@/pages/homePage/HomePage'
-import Article from '@/pages/article/Article'
-import MavonEditor from '@/pages/mavonEditor/MavonEditor'
-import Category from '@/pages/category/Category'
-import Tag from '@/pages/tag/Tag'
-import Comments from '@/pages/comments/Comments'
-import LeaveWords from '@/pages/leaveWords/LeaveWords'
-import Photo from '@/pages/photo/Photo'
-import Links from '@/pages/links/Links'
-import AdminInfo from '@/pages/adminInfo/AdminInfo'
-import PwdModify from '@/pages/password/PwdModify'
-
+const Login        = resolve => require(['@/pages/login/Login'], resolve)
+const HomePage     = resolve => require(['@/pages/homePage/HomePage'], resolve)
+const Article      = resolve => require(['@/pages/article/Article'], resolve)
+const MavonEditor  = resolve => require(['@/pages/mavonEditor/MavonEditor'], resolve)
+const Category     = resolve => require(['@/pages/category/Category'], resolve)
+const Tag          = resolve => require(['@/pages/tag/Tag'], resolve)
+const Comments     = resolve => require(['@/pages/comments/Comments'], resolve)
+const LeaveWords   = resolve => require(['@/pages/leaveWords/LeaveWords'], resolve)
+const Photo        = resolve => require(['@/pages/photo/Photo'], resolve)
+const Links        = resolve => require(['@/pages/links/Links'], resolve)
+const AdminInfo    = resolve => require(['@/pages/adminInfo/AdminInfo'], resolve)
+const PwdModify    = resolve => require(['@/pages/password/PwdModify'], resolve)
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
       name: 'Login',
-      component: Login
+      component: Login,
+      meta:{
+        title:'后台登录'
+      }
     },
     {
       path: '/home',
@@ -32,59 +34,101 @@ export default new Router({
         {
           path:'homePage',
           name:'homePage',
-          component:HomePage
+          component:HomePage,
+          meta:{
+            title:'系统首页'
+          }
         },
         {
           path:'article',
           name:'article',
-          component:Article
+          component:Article,
+          meta:{
+            title:'博文管理'
+          }
         },
         {
           path:'category',
           name:'category',
-          component:Category
+          component:Category,
+          meta:{
+            title:'类别管理'
+          }
         },
         {
           path:'tag',
           name:'tag',
-          component:Tag
+          component:Tag,
+          meta:{
+            title:'标签管理'
+          }
         },
         {
           path:'comments',
           name:'comments',
-          component:Comments
+          component:Comments,
+          meta:{
+            title:'评论管理'
+          }
         },
         {
           path:'leavewords',
           name:'leavewords',
-          component:LeaveWords
+          component:LeaveWords,
+          meta:{
+            title:'留言管理'
+          }
         },
         {
           path:'photo',
           name:'photo',
-          component:Photo
+          component:Photo,
+          meta:{
+            title:'图片管理'
+          }
         },
         {
           path:'links',
           name:'links',
-          component:Links
+          component:Links,
+          meta:{
+            title:'链接管理'
+          }
         },
         {
           path:'adminInfo',
           name:'adminInfo',
-          component:AdminInfo
+          component:AdminInfo,
+          meta:{
+            title:'个人信息'
+          }
         },
         {
           path:'pwdModify',
           name:'pwdModify',
-          component:PwdModify
+          component:PwdModify,
+          meta:{
+            title:'修改密码'
+          }
         }
       ],
     },
     {
       path: '/mavonEditor',
       name: 'mavonEditor',
-      component: MavonEditor
+      component: MavonEditor,
+      meta:{
+        title:'博文编写'
+      }
     },
   ]
 })
+router.beforeEach((to, from, next) => {
+  /* 路由发生变化修改页面title */
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
+  next()
+ })
+
+ export default router

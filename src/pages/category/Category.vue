@@ -8,8 +8,11 @@
         <a-button type="primary" @click="showModifyModal">
           <a-icon type="edit" />修改类别
         </a-button>
+        <a-button type="primary" @click="showAddTagModal">
+          <a-icon type="plus" />添加类别标签
+        </a-button>
         <a-button type="primary" @click="showEditModal">
-          <a-icon type="plus" />编辑类别标签
+          <a-icon type="edit" />编辑标签状态
         </a-button>
       </div>
       <div class="category-list">
@@ -23,11 +26,23 @@
       <div class="modal">
         <a-modal title="添加类别" v-model="addModalVisible" @ok="addCategory" cancelText="取消" okText="确认">
           <p style="margin-left: 100px">
-            <a-input placeholder="名称" style="width: 200px;margin-bottom: 20px" />
+            <a-input placeholder="名称" style="width: 200px;margin-bottom: 20px" v-model="category"/>
+          </p>
+          <p style="margin-left: 100px;">
+            <label for="categorystatus">状态：</label>
+            <a-radio-group v-model="categorystatus" id="categorystatus">
+              <a-radio :value="1">启用</a-radio>
+              <a-radio :value="0">禁用</a-radio>
+            </a-radio-group>
+          </p>
+        </a-modal>
+        <a-modal title="添加类别标签" v-model="addTagModalVisible" @ok="addCategoryTag" cancelText="取消" okText="确认">
+          <p style="margin-left: 100px">
+            <a-input placeholder="名称" style="width: 200px;margin-bottom: 20px" v-model="tag"/>
           </p>
           <p style="margin-left: 100px">
-            <label for="status">状态：</label>
-            <a-radio-group v-model="categorystatus" id="status">
+            <label for="tagstatus">状态：</label>
+            <a-radio-group v-model="tagstatus" id="tagstatus">
               <a-radio :value="1">启用</a-radio>
               <a-radio :value="0">禁用</a-radio>
             </a-radio-group>
@@ -37,7 +52,7 @@
           <a-input placeholder="名称" v-model="categoryName"/>
         </a-modal>
         <a-modal :title="categoryName" v-model="editModalVisible" @ok="editCategory" cancelText="取消" okText="确认">
-          <a-transfer :dataSource="tagList" :targetKeys="tagTargetKeys" :locale="locale" :titles="['拥有','已拥有']"
+          <a-transfer :dataSource="tagList" :targetKeys="tagTargetKeys" :locale="locale" :titles="['启用','未启用']"
             @change="handleTagChange" :render="item=>item.title">
           </a-transfer>
         </a-modal>
@@ -60,8 +75,12 @@
         total: 100,
         addModalVisible: false,
         modifyModalVisible: false,
+        addTagModalVisible:false,
         editModalVisible: false,
+        category:'',
+        tag:'',
         categorystatus: 1,
+        tagstatus:1,
         categoryName:'',
         selectItem: null,
         locale: {
@@ -116,7 +135,7 @@
         categoryList: [{
             key: 0,
             category: '前端',
-            tag: ['html', 'javascript', 'html'],
+            tag: ['html', 'javascript', 'css'],
             time: '2019-05-23',
             status: 0
           },
@@ -133,6 +152,9 @@
     methods: {
       addCategory() {
         this.addModalVisible = false;
+      },
+      addCategoryTag(){
+        this.addTagModalVisible = false;
       },
       modifyCategory() {
         this.modifyModalVisible = false;
@@ -156,6 +178,14 @@
           this.categoryName = this.selectItem.category;
             this.modifyModalVisible = true;
         }
+      },
+      showAddTagModal(){
+        if (this.selectItem == null)
+          this.$message.warn("请选择某一项");
+        else{
+          this.addTagModalVisible = true;
+        }
+
       },
       showEditModal() {
         if (this.selectItem == null)
