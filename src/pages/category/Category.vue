@@ -17,8 +17,18 @@
       </div>
       <div class="category-list">
         <a-table :columns="categoryColumns" :dataSource="categoryList" :pagination="false" :rowSelection="rowSelection">
-          <span slot="status" slot-scope="status,record,index">
-            <a-switch @change='statusChange(index,record.key)' :checked="status == 1 ? true : false" checkedChildren=启用
+          <span slot="tags" slot-scope="tags,index">
+            <span v-if="!tags.length">无标签</span>
+            <span v-else v-for="item in tags" :key="item.tagId">
+              <a-tag color="#87d068" v-if="item.state"> {{item.tagName}}</a-tag>
+              <a-tag color="#ccc" v-else> {{item.tagName}}</a-tag>
+            </span>
+          </span>
+          <span slot="createTime" slot-scope="createTime">
+            {{moment(createTime).fromNow()}}
+          </span>
+          <span slot="state" slot-scope="state,record,index">
+            <a-switch @change='statusChange(index,record.key)' :checked="state == 1 ? true : false" checkedChildren=启用
               unCheckedChildren="禁用" />
           </span>
         </a-table>
@@ -26,7 +36,7 @@
       <div class="modal">
         <a-modal title="添加类别" v-model="addModalVisible" @ok="addCategory" cancelText="取消" okText="确认">
           <p style="margin-left: 100px">
-            <a-input placeholder="名称" style="width: 200px;margin-bottom: 20px" v-model="category"/>
+            <a-input placeholder="名称" style="width: 200px;margin-bottom: 20px" v-model="categoryName" />
           </p>
           <p style="margin-left: 100px;">
             <label for="categorystatus">状态：</label>
@@ -38,7 +48,7 @@
         </a-modal>
         <a-modal title="添加类别标签" v-model="addTagModalVisible" @ok="addCategoryTag" cancelText="取消" okText="确认">
           <p style="margin-left: 100px">
-            <a-input placeholder="名称" style="width: 200px;margin-bottom: 20px" v-model="tag"/>
+            <a-input placeholder="名称" style="width: 200px;margin-bottom: 20px" v-model="tagName" />
           </p>
           <p style="margin-left: 100px">
             <label for="tagstatus">状态：</label>
@@ -49,11 +59,11 @@
           </p>
         </a-modal>
         <a-modal title="修改类别" v-model="modifyModalVisible" @ok="modifyCategory" cancelText="取消" okText="确认">
-          <a-input placeholder="名称" v-model="categoryName"/>
+          <a-input placeholder="名称" v-model="categoryName" />
         </a-modal>
         <a-modal :title="categoryName" v-model="editModalVisible" @ok="editCategory" cancelText="取消" okText="确认">
           <a-transfer :dataSource="tagList" :targetKeys="tagTargetKeys" :locale="locale" :titles="['启用','未启用']"
-            @change="handleTagChange" :render="item=>item.title">
+            @change="handleTagChange" :render="item=>item.tagName">
           </a-transfer>
         </a-modal>
       </div>
@@ -63,10 +73,7 @@
 <script>
   export default {
     created() {
-      for (let i = 0; i < this.categoryList.length; i++) {
-        let temp = this.categoryList[i].tag.join(" , ");
-        this.categoryList[i].tag = temp;
-      }
+      this.getCategoryAndTag();
     },
     data() {
       return {
@@ -75,114 +82,196 @@
         total: 100,
         addModalVisible: false,
         modifyModalVisible: false,
-        addTagModalVisible:false,
+        addTagModalVisible: false,
         editModalVisible: false,
-        category:'',
-        tag:'',
+        category: '',
+        tagName: '',
         categorystatus: 1,
-        tagstatus:1,
-        categoryName:'',
+        tagstatus: 1,
+        categoryName: '',
         selectItem: null,
         locale: {
           itemUnit: '标签',
           itemsUnit: '标签'
         },
-        tagTargetKeys: ['1', '2'],
-        tagList: [{
-            key: '1',
-            title: 'javascript'
-          },
-          {
-            key: '2',
-            title: 'html'
-          },
-          {
-            key: '3',
-            title: 'css'
-          }
-        ],
+        tagTargetKeys: [],
+        tagList: [],
         rowSelection: {
           type: 'radio',
+          selectedRowKeys: [],
           onChange: (selectedRowKeys, selectedRows) => {
+            this.rowSelection.selectedRowKeys = selectedRowKeys;
             this.selectItem = selectedRows[0];
           }
         },
         categoryStatus: [false, true],
         categoryColumns: [{
             title: '类别',
-            dataIndex: 'category',
+            dataIndex: 'categoryName',
             width: 150,
           },
           {
             title: '标签',
-            dataIndex: 'tag',
+            dataIndex: 'tags',
             width: 150,
+            scopedSlots: {
+              customRender: 'tags'
+            },
           },
           {
             title: '创建时间',
-            dataIndex: 'time',
+            dataIndex: 'createTime',
             width: 200,
+            scopedSlots: {
+              customRender: 'createTime'
+            },
           },
           {
             title: '状态',
-            dataIndex: 'status',
+            dataIndex: 'state',
             scopedSlots: {
-              customRender: 'status'
+              customRender: 'state'
             },
             width: 100,
           }
         ],
-        categoryList: [{
-            key: 0,
-            category: '前端',
-            tag: ['html', 'javascript', 'css'],
-            time: '2019-05-23',
-            status: 0
-          },
-          {
-            key: 1,
-            category: '后端',
-            tag: ['java', 'PHP', 'node'],
-            time: '2019-05-23',
-            status: 1
-          },
-        ]
+        categoryList: [],
       }
     },
     methods: {
-      addCategory() {
-        this.addModalVisible = false;
+      getCategoryAndTag() {
+        this.axios.get('/author/categoryDto').then(res => {
+          if (res.data.code == 0) {
+            let list = res.data.data;
+            let tagItem = null;
+            for (let i = 0, len = list.length; i < len; i++) {
+              list[i].key = list[i].categoryId;
+            }
+            this.categoryList = list;
+            this.rowSelection.selectedRowKeys = [];
+          }
+        })
       },
-      addCategoryTag(){
-        this.addTagModalVisible = false;
+      addCategory() {
+        if (this.categoryName.trim() == '') {
+          this.$message.error('类别名称不为空')
+        } else {
+          let category = {
+            categoryName: this.categoryName,
+            state: this.categorystatus
+          }
+          let categoryArr = [];
+          categoryArr.push(category);
+          this.axios.post('/author/categoryDto/categories', categoryArr).then(res => {
+            if (res.data.code == 0) {
+              this.addModalVisible = false;
+              this.$message.success('添加成功!');
+              this.getCategoryAndTag();
+            }
+          })
+        }
+      },
+      addCategoryTag() {
+        if (this.tagName.trim() == '')
+          this.$message.error('标签名称不为空')
+        else {
+          let tag = {
+            categoryId: this.selectItem.categoryId,
+            state: this.tagstatus,
+            tagName: this.tagName
+          }
+          let tagArr = [];
+          tagArr.push(tag);
+          this.axios.post('/author/categoryDto/tags', tagArr).then(res => {
+            if (res.data.code == 0) {
+              this.addTagModalVisible = false;
+              this.$message.success('添加成功!');
+              this.tagName = '';
+              this.getCategoryAndTag();
+            }
+          })
+        }
       },
       modifyCategory() {
-        this.modifyModalVisible = false;
+        let category = {
+          categoryId: this.selectItem.categoryId,
+          categoryName: this.categoryName
+        }
+        let categoryArr = [];
+        categoryArr.push(category);
+        this.axios.put('/author/categoryDto', categoryArr).then(res => {
+          if (res.data.code == 0) {
+            this.modifyModalVisible = false;
+            this.$message.success('修改成功!');
+            this.getCategoryAndTag();
+          }
+        })
       },
       editCategory() {
-        this.editModalVisible = false;
+        let tags = [];
+        let tagList = this.tagList;
+        let tagTargetKeys = this.tagTargetKeys;
+        for (let i = 0; i < tagList.length; i++) {
+          for (let j = 0; j < tagTargetKeys.length; j++) {
+            if (tagList[i].key == tagTargetKeys[j]) {
+              tagList[i].state = 0;
+              break;
+            } else
+              tagList[i].state = 1;
+          }
+        }
+        for (let i = 0; i < this.tagList.length; i++) {
+          let item = {
+            tagId: this.tagList[i].key,
+            state: this.tagList[i].state
+          }
+          tags.push(item);
+        }
+        let categoryArr = [{
+          tags: tags
+        }];
+
+        this.axios.put('/author/categoryDto', categoryArr).then(res => {
+          if (res.data.code == 0) {
+            this.editModalVisible = false;
+          }
+        })
       },
-      statusChange(index,id) {
-        if (this.categoryList[index].status)
-          this.categoryList[index].status = 0;
+      statusChange(index, id) {
+        let state = 0;
+        if (this.categoryList[index].state)
+          state = 0;
         else
-          this.categoryList[index].status = 1;
+          state = 1;
+        let category = {
+          categoryId: id,
+          state: state
+        };
+        let categoryArr = [];
+        categoryArr.push(category);
+        this.axios.put('/author/categoryDto', categoryArr).then(res => {
+          if (res.data.code == 0) {
+            this.categoryList[index].state = state;
+            this.$message.success('修改成功!');
+          }
+        })
       },
       showAddModal() {
+        this.categoryName = '';
         this.addModalVisible = true;
       },
       showModifyModal() {
         if (this.selectItem == null)
           this.$message.warn("请选择某一项");
-        else{
-          this.categoryName = this.selectItem.category;
-            this.modifyModalVisible = true;
+        else {
+          this.categoryName = this.selectItem.categoryName;
+          this.modifyModalVisible = true;
         }
       },
-      showAddTagModal(){
+      showAddTagModal() {
         if (this.selectItem == null)
           this.$message.warn("请选择某一项");
-        else{
+        else {
           this.addTagModalVisible = true;
         }
 
@@ -190,8 +279,15 @@
       showEditModal() {
         if (this.selectItem == null)
           this.$message.warn("请选择某一项");
-        else{
-          this.categoryName = this.selectItem.category
+        else {
+          this.categoryName = this.selectItem.categoryName;
+          this.tagList = this.selectItem.tags;
+          for (let i = 0; i < this.tagList.length; i++) {
+            let id = this.tagList[i].tagId;
+            this.tagList[i].key = id;
+            if (!this.tagList[i].state)
+              this.tagTargetKeys.push(id);
+          }
           this.editModalVisible = true;
         }
       },

@@ -11,27 +11,27 @@
       </div>
       <div class="links-list">
         <a-table :columns="linkColumns" :dataSource="linkList" :pagination="false" :rowSelection="rowSelection">
-          <span slot="iconSrc" slot-scope="iconSrc,record">
+          <span slot="imageUrl" slot-scope="imageUrl,record">
             <div class="iconImg">
-              <img :src="iconSrc" alt="">
+              <img :src="imageUrl" alt="">
             </div>
           </span>
-          <span slot="status" slot-scope="status,record,index">
-            <a-switch @change='statusChange(index,record.key)' :checked="status == 1 ? true : false" checkedChildren=启用
+          <span slot="state" slot-scope="state,record,index">
+            <a-switch @change='statusChange(index,record.key)' :checked="state == 1 ? true : false" checkedChildren=启用
               unCheckedChildren="禁用" />
           </span>
         </a-table>
       </div>
       <div class="modal">
         <a-modal :title="modalTitle" v-model="addOrEditModalVisible" @ok="addOrEditLink" cancelText="取消" okText="确认"
-          :afterClose ="afterModalClose" class="link-modal">
+          :afterClose="afterModalClose" class="link-modal">
           <p>
             <label for="link-name">名称</label>
-            <a-input style="width:200px;margin-left:20px;" id="link-name" v-model="linkName" spellcheck="false"/>
+            <a-input style="width:200px;margin-left:20px;" id="link-name" v-model="linkName" spellcheck="false" />
           </p>
           <p>
             <label for="lin-url" class="link-url">地址</label>
-            <a-input style="width:200px;margin-left:20px;" id="link-url" v-model="linkUrl"  spellcheck="false"/>
+            <a-input style="width:200px;margin-left:20px;" id="link-url" v-model="linkUrl" spellcheck="false" />
           </p>
           <p>
             <span class="img-left">图标</span>
@@ -58,6 +58,9 @@
 </template>
 <script>
   export default {
+    created() {
+      this.getLinksList();
+    },
     data() {
       return {
         addOrEditModalVisible: false,
@@ -66,95 +69,60 @@
         linkName: '',
         linkUrl: '',
         iconSrc: '',
-        status: 1,
-        bgClass:'bgClass',
+        status: 0,
+        imageId: '',
+        bgClass: 'bgClass',
         selectItem: null,
         rowSelection: {
           type: 'radio',
+          selectedRowKeys: [],
           onChange: (selectedRowKeys, selectedRows) => {
+            this.rowSelection.selectedRowKeys = selectedRowKeys
             this.selectItem = selectedRows[0];
           }
         },
         linkColumns: [{
             title: '图标',
-            dataIndex: 'iconSrc',
+            dataIndex: 'imageUrl',
             scopedSlots: {
-              customRender: 'iconSrc'
+              customRender: 'imageUrl'
             },
             width: 150
           },
           {
             title: '名称',
-            dataIndex: 'linkName',
+            dataIndex: 'urlName',
             width: 150
           },
           {
             title: '链接地址',
-            dataIndex: 'linkUrl',
+            dataIndex: 'urlLink',
             width: 200
           },
           {
             title: '状态',
-            dataIndex: 'status',
+            dataIndex: 'state',
             scopedSlots: {
-              customRender: 'status'
+              customRender: 'state'
             },
             width: 100,
           }
         ],
-        linkList: [{
-            key: 0,
-            linkName: 'github',
-            iconSrc: './static/github.svg',
-            linkUrl: 'http://baidu.com',
-            status: 1,
-          },
-          {
-            key: 1,
-            linkName: '掘金',
-            iconSrc: './static/juejin.jpg',
-            linkUrl: 'http://baidu.com',
-            status: 1,
-          },
-          {
-            key: 2,
-            linkName: 'stackOverFlow',
-            iconSrc: './static/stackOverflow.jpg',
-            linkUrl: 'http://baidu.com',
-            status: 0,
-          },
-          {
-            key: 3,
-            linkName: '思否',
-            iconSrc: './static/sf.jpg',
-            linkUrl: 'http://baidu.com',
-            status: 1,
-          },
-          {
-            key: 4,
-            linkName: 'w3cschool',
-            iconSrc: './static/w3cschool.jpg',
-            linkUrl: 'http://baidu.com',
-            status: 0,
-          },
-          {
-            key: 5,
-            linkName: 'csdn',
-            iconSrc: './static/csdn.jpg',
-            linkUrl: 'http://baidu.com',
-            status: 1,
-          },
-          {
-            key: 6,
-            linkName: '阿里巴巴矢量图标库',
-            iconSrc: './static/ali.jpg',
-            linkUrl: 'http://baidu.com',
-            status: 1,
-          }
-        ]
+        linkList: []
       }
     },
     methods: {
+      getLinksList() {
+        this.axios.get('/author/urlDto?sort=1').then(res => {
+          if (res.data.code == 0) {
+            this.rowSelection.selectedRowKeys = [];
+            this.linkList = res.data.data;
+            for (let i = 0; i < this.linkList.length; i++) {
+              this.linkList[i].key = this.linkList[i].urlId;
+            }
+          }
+        })
+      },
       showAddModal() {
         this.modalTitle = "添加链接";
         this.modalStatus = 1;
@@ -164,19 +132,20 @@
         if (this.selectItem == null)
           this.$message.warn("请选择某一项");
         else {
-          this.linkName = this.selectItem.linkName;
-          this.linkUrl = this.selectItem.linkUrl;
-          this.iconSrc = this.selectItem.iconSrc;
-          this.status = this.selectItem.status;
+          this.linkName = this.selectItem.urlName;
+          this.linkUrl = this.selectItem.urlLink;
+          this.iconSrc = this.selectItem.imageUrl;
+          this.status = this.selectItem.state;
+          this.imageId = this.selectItem.imageId;
           this.modalTitle = "修改链接";
           this.modalStatus = 0;
           this.addOrEditModalVisible = true;
         }
       },
-      afterModalClose(){
+      afterModalClose() {
         this.clearInput();
       },
-      clearInput(){
+      clearInput() {
         this.linkName = '';
         this.linkUrl = '';
         this.iconSrc = '';
@@ -191,49 +160,74 @@
       },
       addLink() {
         let linkItem = {
-          linkName: this.linkName,
-          linkUrl: this.linkUrl,
-          iconSrc: this.iconSrc,
-          status: this.status,
-          key: this.linkUrl
+          urlName: this.linkName,
+          urlLink: this.linkUrl,
+          imageId: this.imageId,
+          state: this.status,
         }
-        this.addOrEditModalVisible = false;
-        this.linkList.push(linkItem);
-        this.$message.success("添加成功");
-
+        this.axios.post('/author/urlDto', linkItem).then(res => {
+          if (res.data.code == 0) {
+            this.addOrEditModalVisible = false;
+            this.$message.success("添加成功");
+            this.getLinksList();
+          }
+        })
       },
       editLink() {
-        let len = this.linkList.length;
-        for (let i = 0; i < len; i++) {
-          if (this.linkList[i].key == this.selectItem.key) {
-            let linkItem = {
-              linkName: this.linkName,
-              linkUrl: this.linkUrl,
-              iconSrc: this.iconSrc,
-              status: this.status,
-              key: this.linkUrl
-            }
-            this.linkList[i].linkName = this.linkName;
-            this.linkList[i].linkUrl = this.linkUrl;
-            this.linkList[i].iconSrc = this.iconSrc;
-            this.linkList[i].status = this.status;
+        let link = {
+          urlId: this.selectItem.urlId,
+          imageId: this.imageId,
+          urlLink: this.linkUrl,
+          urlName: this.linkName,
+          state: this.status
+        };
+        let linkArr = [];
+        linkArr.push(link);
+        this.axios.put('/author/urlDto', linkArr).then(res => {
+          if (res.data.code == 0) {
             this.addOrEditModalVisible = false;
-            this.$message.success("修改成功");
+            this.$message.success('修改成功!');
+            this.getLinksList();
           }
-        }
+        })
 
       },
       statusChange(index, id) {
-        if (this.linkList[index].status)
-          this.linkList[index].status = 0;
+        let state = 0;
+        if (this.linkList[index].state)
+          state = 0;
         else
-          this.linkList[index].status = 1;
+          state = 1;
+        let link = {
+          urlId: id,
+          state: state
+        };
+        let linkArr = [];
+        linkArr.push(link);
+        this.axios.put('/author/urlDto', linkArr).then(res => {
+          if (res.data.code == 0) {
+            this.linkList[index].state = state;
+            this.$message.success('修改成功!');
+          }
+        })
       },
       getFile() {
         let file = this.$refs.fileUpload.files[0];
-        console.log(file)
-        this.iconSrc =
-          'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558777341275&di=9bf4d042076970627ee863e88000249a&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F07%2F19%2F14578dc77cb58a2.jpg'
+        let param = new FormData();
+        param.append("file", file);
+        let config = {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        };
+        this.axios.post('/author/urlDto/image?dirId=1136201317346197504', param, config).then(res => {
+          let data = res.data;
+          if (data.code == 0) {
+            this.imageId = data.data.imageId;
+            this.iconSrc = data.data.imageUrl;
+          }
+        })
+
       },
     },
 
@@ -304,10 +298,12 @@
     transition: all 0.8s ease;
     display: none;
   }
-  .img-bg .iconfont{
+
+  .img-bg .iconfont {
     font-size: 30px;
   }
-  .bgClass{
+
+  .bgClass {
     background: #fff;
   }
 

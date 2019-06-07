@@ -19,7 +19,6 @@ module.exports = {
   externals:{
     'vue': 'Vue',
     'axios': 'axios',
-    'qs':'qs',
     'marked':'marked'
   },
   output: {

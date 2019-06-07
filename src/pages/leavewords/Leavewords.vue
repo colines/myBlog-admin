@@ -6,26 +6,31 @@
         <a-list class="demo-loadmore-list" :loading="loading" itemLayout="horizontal" :dataSource="data">
           <div v-if="showLoadingMore" slot="loadMore"
             :style="{ textAlign: 'center', marginTop: '12px', height: '32px', lineHeight: '32px' }">
-            <a-spin v-if="loadingMore" />
-            <a-button v-else @click="onLoadMore">加载更多</a-button>
+            <div class="list-bottom">
+              <div v-if="!isLastPage">
+                <a-spin v-if="loadingMore" />
+                <a-button v-else @click="onLoadMore" >加载更多</a-button>
+              </div>
+              <div v-else><p style="color: #666;margin-top: 4rem;">没有更多的数据了</p></div>
+            </div>
           </div>
           <a-list-item slot="renderItem" slot-scope="item, index">
             <a slot="actions" @click="replyMail">回复</a>
             <a slot="actions">
-              <a-popconfirm title="是否确定删除?" @confirm="confirmDelLeaveWords" okText="是"
+              <a-popconfirm title="是否确定删除?" @confirm="confirmDelLeaveWords(item.guestbookId,index)" okText="是"
                 cancelText="否">
                 <span>删除</span>
               </a-popconfirm>
             </a>
             <a-list-item-meta
-              description="Ant Design, a design language for background applications, is refined by Ant UED Team">
-              <span slot="title">{{item.name.last}}</span>
-              <a-avatar slot="avatar" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+              :description="Utils.html_encode(item.guestbookContent)">
+              <span slot="title">{{Utils.html_encode(item.userName)}}</span>
+              <a-avatar slot="avatar" :src="item.imageUrl" />
             </a-list-item-meta>
             <div>
-              <a href="http://baidu.com" target="_blank" style="margin-right: 20px"><span
+              <a :href="item.guestbookUrl" target="_blank" style="margin-right: 20px"><span
                   class=iconfont>&#xe63e;</span></a>
-              <span>1548132154@qq.com</span>
+              <span>{{item.email}}</span>
             </div>
           </a-list-item>
         </a-list>
@@ -35,10 +40,13 @@
 </template>
 <script>
   export default {
-    mounted() {
+    created() {
       this.getData((res) => {
+        let data = res.data.data;
         this.loading = false;
-        this.data = res.data.results;
+        this.data = data.list;
+        this.lastPage = data.lastPage;
+        this.total = data.total;
       })
     },
     data() {
@@ -47,11 +55,15 @@
         loadingMore: false,
         showLoadingMore: true,
         data: [],
+        currentPage: 1,
+        total:'',
+        lastPage:'',
+        isLastPage:false,
       }
     },
     methods: {
       reqwest(callback) {
-        this.axios.get('https://randomuser.me/api/?results=5&inc=name,gender,email,nat&noinfo').then(res => {
+        this.axios.get('/author/guestbookDto?pageNum='+this.currentPage+'&state=1&sort=1').then(res => {
           console.log(res);
           callback(res);
         })
@@ -60,24 +72,47 @@
         this.reqwest(callback)
       },
       onLoadMore() {
+        if(this.data.length == this.total){
+          this.isLastPage = true;
+          return;
+        }
         this.loadingMore = true
-        this.getData((res) => {
-          this.data = this.data.concat(res.data.results)
+        if(this.currentPage == this.lastPage){
+          this.isLastPage = true;
+        }else{
+          this.currentPage++;
+          this.getData((res) => {
+          this.data = this.data.concat(res.data.data.list)
           this.loadingMore = false
           this.$nextTick(() => {
             window.dispatchEvent(new Event('resize'))
           })
         })
+        }
+        
       },
       replyMail() {
         let who = prompt("请输入接收人的邮箱: ", "1548132154@qq.com");
-        let what = prompt("请输入主题: ", "Have a good day");
+        let what = prompt("请输入主题: ", "Have a nice day");
         if (confirm("是否确认发送给 " + who) == true) {
           window.location.href = 'mailto:' + who + '?subject=' + what;
         }
       },
-      confirmDelLeaveWords(){
-        this.$message.success('删除成功')
+      confirmDelLeaveWords(id,index){
+        let guestBook = {
+          state:0,
+          guestbookId:id,
+          userId:1
+        }
+        let guestBookArr = [];
+        guestBookArr.push(guestBook);
+        this.axios.put('/author/guestbookDto',guestBookArr).then(res=>{
+          if(res.data.code == 0){
+            console.log(res);
+            this.$message.success('删除成功')
+            this.data.splice(index,1);
+          }
+        })
       }
     },
 

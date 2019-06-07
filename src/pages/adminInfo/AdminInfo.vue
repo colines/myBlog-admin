@@ -4,16 +4,16 @@
       <div class="info">
         <p>
           <label for="nick-name">昵称</label>
-          <a-input style="width:320px;margin-left:20px;" id="nick-name" v-model="nickName"/>
+          <a-input style="width:320px;margin-left:20px;" id="nick-name" v-model="nickName" />
         </p>
         <p>
           <label for="sign" class="sign">签名</label>
-          <a-textarea :rows="4" style="width:320px;margin-left:20px;" id="sign" v-model="sign"/>
+          <a-textarea :rows="4" style="width:320px;margin-left:20px;" id="sign" v-model="sign" />
         </p>
         <p>
           <span class="img-left">头像</span>
           <div class="author-img">
-            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847245158&di=7d375f370cd1fa2eab45a3b59b0baa1c&imgtype=0&src=http%3A%2F%2Flkker-10041312.file.myqcloud.com%2FImages%2F201902%2FgVaG15512595824319.jpg" alt="">
+            <img :src="imageUrl" alt="">
             <div class="img-bg">
               <span>更换头像</span>
               <input type="file" class="file-upload" @change="getFile" ref="fileUpload" title="">
@@ -30,35 +30,85 @@
 </template>
 <script>
   export default {
-    data(){
-      return{
-        nickName:'',
-        sign:'',
+    created() {
+      this.getAdminInfo();
+    },
+    data() {
+      return {
+        nickName: '',
+        sign: '',
+        imageId: '',
+        imageUrl: '',
       }
     },
     methods: {
-      getFile() {
-        let file = this.$refs.fileUpload.files[0];
-        console.log(file)
-      },
-      infoModify(){
-        if(this.checkInfoIsEmpty()){
-          this.$message.success("修改成功");
+      getAdminInfo() {
+        let admin = sessionStorage.getItem('admin') || [];
+        if (!admin.userName) {
+          this.axios.get('/author/userDto/1').then(res => {
+            if (res.data.code == 0) {
+              let data = res.data.data;
+              this.nickName = data.userName;
+              this.imageId = data.imageId;
+              this.imageUrl = data.imageUrl;
+              this.sign = data.userSignature;
+            }
+          })
+        } else {
+          this.nickName = admin.userName;
+          this.imageId = admin.imageId;
+          this.imageUrl = admin.imageUrl;
+          this.sign = admin.userSignature;
         }
-
       },
-      checkInfoIsEmpty(){
+      infoModify() {
+        if (this.checkInfoIsEmpty()) {
+          let admin = {
+            userId: 1,
+            userName: this.nickName,
+            imageId: this.imageId,
+            userSignature: this.sign
+          }
+          this.axios.put('/author/userDto', admin).then(res => {
+            if (res.data.code == 0) {
+              this.$EventBus.$emit('getAdminInfo',this.imageUrl);
+              this.$message.success('修改成功');
+            }
+          })
+        }
+      },
+      checkInfoIsEmpty() {
         let flag = true;
-        if(this.nickName == ''){
+        if (this.nickName == '') {
           this.$message.error("昵称不能为空");
           flag = false;
         }
-        if(this.sign == ''){
+        if (this.sign == '') {
           this.$message.error("签名不能为空");
           flag = false;
         }
         return flag;
-      }
+      },
+      getFile() {
+        let file = this.$refs.fileUpload.files[0];
+        let param = new FormData();
+        param.append("file", file);
+        let config = {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        };
+        this.axios.post('/author/imageDto/image/1133930631181381632', param, config).then(res => {
+          console.log(res);
+          let data = res.data;
+          if (data.code == 0) {
+            this.imageId = data.data.imageId;
+            this.imageUrl = data.data.imageUrl;
+          }
+        })
+
+      },
+
     },
 
   }

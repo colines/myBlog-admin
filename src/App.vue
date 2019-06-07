@@ -48,11 +48,14 @@ export default {
     width: 610px;
   }
   .ant-avatar{
-    width: 45px;
-    height: 45px;
+    width: 35px;
+    height: 35px;
   }
   .ant-comment-inner{
     padding: 10px 0;
+  }
+  .ant-tag{
+    margin: 3px;
   }
 
 </style>

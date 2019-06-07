@@ -60,19 +60,31 @@
         this.focusFlag = 0;
       },
       checkInfo() {
+        if (this.username.trim() == '') {
+          this.$message.error('账号不能为空')
+          return false;
+
+        }
+        if (this.password.trim() == '') {
+          this.$message.error('密码不能为空')
+          return false;
+        }
+        return true;
 
       },
       userLogin() {
-        let user = { //用户对象
-          uname: 'uniAdmin',
-          pwd: '123456'
+        let myUser = {
+          username:this.username,
+          password:this.password
         }
-
-        // this.axios.post('/json/auth/login', this.$qs.stringify(user)).then(res => {
-        //   console.log(res);
-        //   // this.$router.push('/home/announcement');
-        // });
-        this.$router.push('/home/homePage');
+        if (this.checkInfo())
+          this.axios.get('/author/userDto?userName=' + this.username + '&userPassword=' + this.password).then(res => {
+            if (res.data.code == 0) {
+              this.$router.push('/home/homePage');
+              sessionStorage.setItem('myUser',JSON.stringify(myUser));
+            } else
+              this.$message.error('账号或密码错误');
+          })
       }
     },
 
@@ -113,7 +125,8 @@
     line-height: 25px;
     line-height: 25px;
     font-size: 18px;
-    color: #fff;;
+    color: #fff;
+    ;
     margin-bottom: 20px;
   }
 
@@ -123,7 +136,7 @@
     line-height: 40px;
     border-radius: 3px;
     background: #fff;
-    border:1px solid #fff;
+    border: 1px solid #fff;
   }
 
   .username span,
@@ -180,8 +193,9 @@
     color: #fff;
     cursor: pointer;
   }
-  .forget-psw:hover{
-    text-decoration:underline;
+
+  .forget-psw:hover {
+    text-decoration: underline;
   }
 
   .info {
@@ -189,11 +203,6 @@
     line-height: 25px;
   }
 
-  .info span {
-    font-size: 12px;
-    color: #FF2832;
-    padding-left: 12px;
-  }
 
   .focusClass {
     border: 1px solid rgb(109, 111, 122);

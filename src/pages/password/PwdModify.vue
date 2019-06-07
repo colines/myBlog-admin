@@ -3,16 +3,12 @@
     <div class="pwd-modify">
         <div class="pwd">
           <p>
-            <label for="old-pwd">当前密码</label>
-            <a-input type="password" placeholder="密码长度为6到32位" id="old-pwd"  class="pwd-input" v-model="oldPwd"/>
-          </p>
-          <p>
             <label for="new-pwd">新密码</label>
-            <a-input type="password" placeholder="新密码与当前密码不能相同" id="new-pwd" class="pwd-input" v-model="newPwd" />
+            <a-input type="password" placeholder="密码长度为6到32位" id="new-pwd" class="pwd-input" v-model="newPwd" />
           </p>
           <p>
             <label for="comfirm-pwd">确认密码</label>
-            <a-input type="password" placeholder="确认密码与新密码一致" id="comfirm-pwd" class="pwd-input" v-model="comfirmPwd" />
+            <a-input type="password" placeholder="确认密码与新密码一致" id="comfirm-pwd" class="pwd-input" v-model="comfirmPwd" @keyup.enter="modifyPwd"/>
           </p>
          <a-button type="primary" style="margin-left: 140px;" @click="modifyPwd">修改</a-button>
         </div>
@@ -31,18 +27,23 @@
     methods: {
       modifyPwd(){
         if(this.pwdInputIsEquitable()){
-          this.$message.success("修改成功");
+          let admin = {
+            userId: 1,
+            userPassword:this.newPwd
+          }
+          this.axios.put('/author/userDto', admin).then(res => {
+            if (res.data.code == 0) {
+              this.$message.success('修改成功');
+              this.newPwd = this.comfirmPwd = '';
+            }
+          })
         }
       },
       pwdInputIsEquitable(){
         let flag = true;
-        let oldPwdLen = this.oldPwd.trim().length;
-        if(oldPwdLen < 6 || oldPwdLen > 32){
+        let len = this.newPwd.trim().length;
+        if(len < 6 || len > 32){
           this.$message.error('密码长度为6到32位');
-          flag = false;
-        }
-        if(this.oldPwd == this.newPwd){
-          this.$message.error('新密码和旧密码不能相同');
           flag = false;
         }
         if(this.newPwd != this.comfirmPwd){

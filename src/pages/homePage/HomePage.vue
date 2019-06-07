@@ -7,43 +7,14 @@
     </div>
     <div class="meta-box">
       <div class="meta">
-        <div class="meta-item">
+        <div class="meta-item" v-for="(item,index) in metaInfoList" :key="item.configId">
           <div class="item">
-            <p class="time"><span class="iconfont">&#xe609;</span>THIS WEEK</p>
+            <p class="time"><span class="iconfont">&#xe609;</span>{{dateName[index]}}</p>
             <p class="num">
-              <span class="iconfont">&#xe60c;</span><span>300</span>
-              <span class="iconfont">&#xe684;</span><span>200</span>
-              <span class="iconfont">&#xe605;</span><span>500</span>
-            </p>
-          </div>
-        </div>
-        <div class="meta-item">
-          <div class="item">
-            <p class="time"><span class="iconfont">&#xe609;</span>THIS MONTH</p>
-            <p class="num">
-              <span class="iconfont">&#xe60c;</span><span>300</span>
-              <span class="iconfont">&#xe684;</span><span>200</span>
-              <span class="iconfont">&#xe605;</span><span>500</span>
-            </p>
-          </div>
-        </div>
-        <div class="meta-item">
-          <div class="item">
-            <p class="time"><span class="iconfont">&#xe609;</span>THIS YEAR</p>
-            <p class="num">
-              <span class="iconfont">&#xe60c;</span><span>300</span>
-              <span class="iconfont">&#xe684;</span><span>200</span>
-              <span class="iconfont">&#xe605;</span><span>500</span>
-            </p>
-          </div>
-        </div>
-        <div class="meta-item">
-          <div class="item">
-            <p class="time"><span class="iconfont">&#xe609;</span>ALL TIME</p>
-            <p class="num">
-              <span class="iconfont">&#xe60c;</span><span>300</span>
-              <span class="iconfont">&#xe684;</span><span>200</span>
-              <span class="iconfont">&#xe605;</span><span>500</span>
+              <span class="iconfont">&#xe610;</span><span>{{item.articleSum}}</span>
+              <span class="iconfont">&#xe60c;</span><span>{{item.thumbupSum}}</span>
+              <span class="iconfont">&#xe684;</span><span>{{item.commentSum}}</span>
+              <span class="iconfont">&#xe605;</span><span>{{item.visitSum}}</span>
             </p>
           </div>
         </div>
@@ -58,32 +29,32 @@
         <div class="words-play">
           <a-carousel autoplay>
             <div>
-              <a-comment v-for="(item,index) in 6" :key="index">
-                <a slot="author">Han Solo</a>
-                <a-avatar src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847245158&di=7d375f370cd1fa2eab45a3b59b0baa1c&imgtype=0&src=http%3A%2F%2Flkker-10041312.file.myqcloud.com%2FImages%2F201902%2FgVaG15512595824319.jpg" alt="Han Solo"
+              <a-comment v-for="(item,index) in wordsList1" :key="index">
+                <a slot="author">{{Utils.html_decode(item.userName)}}</a>
+                <a-avatar :src="item.imageUrl" alt="Han Solo"
                   slot="avatar" />
-                <a-tooltip slot="content" title="We supply a series of design principles">
+                <a-tooltip slot="content" :title="Utils.html_decode(item.guestbookContent)">
                   <span class="user-words">
-                    We supply a series of design principles principlesprinciples
+                    {{Utils.html_decode(item.guestbookContent)}}
                   </span>
                 </a-tooltip>
-                <a-tooltip slot="datetime" :title="moment().format('YYYY-MM-DD HH:mm:ss')">
-                  <span>{{moment().fromNow()}}</span>
+                <a-tooltip slot="datetime" :title="moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss')">
+                  <span>{{moment(item.updateTime).fromNow()}}</span>
                 </a-tooltip>
               </a-comment>
             </div>
             <div>
-              <a-comment v-for="(item,index) in 5" :key="index">
-                <a slot="author">Han Solo</a>
-                <a-avatar src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847245157&di=7759375a127a14e399f1d16f56091786&imgtype=0&src=http%3A%2F%2Fstatic.tm51.com%2Favatar%2Fdefault%2Fheader%2F10136.jpg" alt="Han Solo"
+              <a-comment v-for="(item,index) in wordsList2" :key="index">
+                <a slot="author">{{Utils.html_decode(item.userName)}}</a>
+                <a-avatar :src="item.imageUrl" alt="Han Solo"
                   slot="avatar" />
-                <a-tooltip slot="content" title="have a good day">
+                <a-tooltip slot="content" :title="Utils.html_decode(item.guestbookContent)">
                   <span class="user-words">
-                    have a good day
+                    {{Utils.html_decode(item.guestbookContent)}}
                   </span>
                 </a-tooltip>
-                <a-tooltip slot="datetime" :title="moment().format('YYYY-MM-DD HH:mm:ss')">
-                  <span>{{moment().fromNow()}}</span>
+                <a-tooltip slot="datetime" :title="moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss')">
+                  <span>{{moment(item.updateTime).fromNow()}}</span>
                 </a-tooltip>
               </a-comment>
             </div>
@@ -104,34 +75,34 @@
               <a-icon type="right-circle" />
             </div>
             <div>
-              <a-comment v-for="(item,index) in 6" :key="index">
-                <a slot="author">Han Solo</a>
+              <a-comment v-for="(item,index) in commentList" :key="index" v-if="index < 6">
+                <a slot="author">{{Utils.html_decode(item.userName)}}</a>
                 <a-avatar
-                  src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847274811&di=998504ebcbddbb032f61f42873ba88ca&imgtype=0&src=http%3A%2F%2Fstatic.tm51.com%2Favatar%2Fdefault%2Fheader%2F10017.jpg"
+                  :src="item.imageUrl"
                   alt="Han Solo" slot="avatar" />
-                <a-tooltip slot="content" title="We supply a series of design principles">
+                <a-tooltip slot="content" :title="Utils.html_decode(item.reviewContent)">
                   <span class="user-words">
-                    We supply a series of design principles principlesprinciples
+                    {{Utils.html_decode(item.reviewContent)}}
                   </span>
                 </a-tooltip>
-                <a-tooltip slot="datetime" :title="moment().format('YYYY-MM-DD HH:mm:ss')">
-                  <span>{{moment().fromNow()}}</span>
+                <a-tooltip slot="datetime" :title="moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss')">
+                  <span>{{moment(item.updateTime).fromNow()}}</span>
                 </a-tooltip>
               </a-comment>
             </div>
             <div>
-              <a-comment v-for="(item,index) in 3" :key="index">
-                <a slot="author">Han Solo</a>
+              <a-comment v-for="(item,index) in commentList" :key="index" v-if="index >= 6">
+                <a slot="author">{{Utils.html_decode(item.userName)}}</a>
                 <a-avatar
-                  src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847245156&di=15ed35bdb6df6e10819814616825a04b&imgtype=0&src=http%3A%2F%2Fstatic.tm51.com%2Favatar%2Fdefault%2Fheader%2F10128.jpg"
+                  :src="item.imageUrl"
                   alt="Han Solo" slot="avatar" />
-                <a-tooltip slot="content" title="have a good day">
+                <a-tooltip slot="content" :title="Utils.html_decode(item.reviewContent)">
                   <span class="user-words">
-                    have a good day
+                    {{Utils.html_decode(item.reviewContent)}}
                   </span>
                 </a-tooltip>
-                <a-tooltip slot="datetime" :title="moment().format('YYYY-MM-DD HH:mm:ss')">
-                  <span>{{moment().fromNow()}}</span>
+                <a-tooltip slot="datetime" :title="moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss')">
+                  <span>{{moment(item.updateTime).fromNow()}}</span>
                 </a-tooltip>
               </a-comment>
             </div>
@@ -168,12 +139,10 @@
 </template>
 <script>
   import echarts from '@/utils/echarts.js'
-  import moment from 'moment'
-  moment.lang('zh-cn');
+  
   export default {
     data() {
       return {
-        moment,
         searchData: [
           {
             keyWords: 'html的相对长度',
@@ -201,7 +170,21 @@
           }
         ],
         updateFlag: false,
+        metaInfoList:[],
+        dateName:['THIS WEEK','THIS MONTH','THIS YEAR','ALL TIME'],
+        list:[],
+        wordsList1:[],
+        wordsList2:[],
+        j:'',
+        guestList:[],
+        commentList:[],
+
       }
+    },
+    created() {
+      this.getMetaInfo();
+      this.guestBookList();
+      this.getCommentList();
     },
     mounted() {
       // 调用绘制图表的方法
@@ -209,6 +192,14 @@
       this.drawTagChart();
     },
     methods: {
+      getMetaInfo(){
+        this.axios.get('/author/userDto/authorInfo/1').then(res=>{
+          console.log(res);
+          if(res.data.code == 0){
+            this.metaInfoList = res.data.data;
+          }
+        })
+      },
       drawVisitChart() {
         // 实例化echarts对象
         let visitChart = echarts.init(this.$refs.visitChart)
@@ -228,7 +219,7 @@
             type: 'value'
           },
           series: [{
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: [48, 60, 70, 60, 70, 80, 90],
             type: 'line'
           }]
         };
@@ -262,6 +253,34 @@
       },
       updateSearchList() {
         this.updateFlag = true;
+      },
+      guestBookList(){
+        this.axios.get('/author/guestbookDto?pageNum=1&state=1&sort=1').then(res => {
+          // console.log(res);
+          if(res.data.code == 0){
+            this.list = res.data.data.list;
+          }
+          this.j = Math.ceil(this.list.length/6);
+          let k = 0;
+          for(let i=0;i<this.list.length;i++){
+            if(i < 6 ){
+              this.wordsList1.push(this.list[i]);
+            }else{
+              this.wordsList2.push(this.list[i]);
+            }
+          }
+        })
+      },
+      getCommentList(){
+        this.axios.get('/author/review').then(res => {
+          if (res.data.code == 0) {
+            console.log('---')
+            console.log(res);
+            let data = res.data;
+           this.commentList = res.data.data;
+            
+          }
+        })
       }
     }
   }

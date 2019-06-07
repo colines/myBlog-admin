@@ -11,7 +11,7 @@
         <a-button type="primary" @click="readArticle">
           <a-icon type="zoom-in" />查看文章
         </a-button>
-        <a-select defaultValue="全部" @change="handleCategoryChange" class="select">
+        <!-- <a-select defaultValue="全部" @change="handleCategoryChange" class="select">
           <a-select-option value="全部">全部</a-select-option>
           <a-select-option value="前端">前端</a-select-option>
           <a-select-option value="后端">后端</a-select-option>
@@ -27,20 +27,29 @@
         </span>
         <a-button type="primary" @click="searchArticle">
           <a-icon type="search" />搜索
-        </a-button>
+        </a-button> -->
       </div>
       <div class="sort-article">
-          <a-radio-group v-model="articletype" @change="typeChange">
-              <a-radio :value="1">最新文章</a-radio>
-              <a-radio :value="2">热门文章</a-radio>
-              <a-radio :value="3">评论最多</a-radio>
-            </a-radio-group>
-            <!-- <a-button type="primary" style="margin-left: 65px;">获取文章</a-button> -->
+        <a-radio-group v-model="articletype" @change="typeChange">
+          <a-radio :value="2">最新文章</a-radio>
+          <a-radio :value="1">热门文章</a-radio>
+          <a-radio :value="3">评论最多</a-radio>
+        </a-radio-group>
       </div>
       <div class="article-list">
         <a-table :columns="articleColumns" :dataSource="articleList" :pagination="false" :rowSelection="rowSelection">
-          <span slot="status" slot-scope="status,record,index">
-            <a-switch @change='statusChange(index,record.key)' :checked="status == 1 ? true : false" checkedChildren=启用
+          <span slot="tags" slot-scope="tags,index">
+            <span v-if="!tags.length">无标签</span>
+            <span v-else v-for="item in tags" :key="item.tagId">
+              <a-tag color="#87d068" v-if="item.state"> {{item.tagName}}</a-tag>
+              <a-tag color="#ccc" v-else> {{item.tagName}}</a-tag>
+            </span>
+          </span>
+          <span slot="updateTime" slot-scope="updateTime">
+              {{moment(updateTime).format('YYYY-MM-DD')}}
+            </span>
+          <span slot="state" slot-scope="state,record,index">
+            <a-switch @change='statusChange(index,record.key)' :checked="state == 1 ? true : false" checkedChildren=启用
               unCheckedChildren="禁用" />
           </span>
         </a-table>
@@ -54,13 +63,16 @@
 </template>
 <script>
   export default {
+    created() {
+      this.getArticleList();
+    },
     data() {
       return {
         currentPage: 1,
         pageSize: 6,
-        total: 100,
+        total: '',
         selectItem: null,
-        articletype:1,
+        articletype: 2,
         rowSelection: {
           type: 'radio',
           onChange: (selectedRowKeys, selectedRows) => {
@@ -68,123 +80,84 @@
           }
         },
         articleStatus: [false, true],
-        articleColumns: [{
+        articleColumns: [
+          {
             title: '类别',
-            dataIndex: 'category',
+            dataIndex: 'categoryName',
             width: 150,
           },
           {
             title: '标签',
-            dataIndex: 'tag',
+            dataIndex: 'tags',
             width: 150,
+            scopedSlots: {
+              customRender: 'tags'
+            },
           },
           {
             title: '标题',
-            dataIndex: 'title',
+            dataIndex: 'articleTitle',
             width: 400,
           },
           {
             title: '点赞数',
-            dataIndex: 'agreeNum',
+            dataIndex: 'thumbupCount',
             width: 120,
           },
           {
             title: '评论数',
-            dataIndex: 'commentsNum',
+            dataIndex: 'commentCount',
             width: 120,
           },
           {
             title: '阅读量',
-            dataIndex: 'readNum',
+            dataIndex: 'visitCount',
             width: 120,
           },
           {
             title: '创作时间',
-            dataIndex: 'time',
+            dataIndex: 'updateTime',
             width: 200,
+            scopedSlots: {
+              customRender: 'updateTime'
+            },
           },
           {
             title: '状态',
-            dataIndex: 'status',
+            dataIndex: 'state',
             scopedSlots: {
-              customRender: 'status'
+              customRender: 'state'
             },
             width: 100,
           }
         ],
-        articleList: [{
-            key: 0,
-            category: '前端',
-            tag: 'html',
-            title: 'JavaScript的进阶之路',
-            agreeNum: 1024,
-            commentsNum: 1024,
-            readNum: 1024,
-            time: '2019-05-23',
-            status: 1
-          },
-          {
-            key: 1,
-            category: '前端',
-            tag: 'html',
-            title: 'JavaScript的进阶之路',
-            agreeNum: 1024,
-            commentsNum: 1024,
-            readNum: 1024,
-            time: '2019-05-23',
-            status: 0
-          },
-          {
-            key: 2,
-            category: '前端',
-            tag: 'html',
-            title: 'JavaScript的进阶之路',
-            agreeNum: 1024,
-            commentsNum: 1024,
-            readNum: 1024,
-            time: '2019-05-23',
-            status: 1
-          },
-          {
-            key: 3,
-            category: '前端',
-            tag: 'html',
-            title: 'JavaScript的进阶之路',
-            agreeNum: 1024,
-            commentsNum: 1024,
-            readNum: 1024,
-            time: '2019-05-23',
-            status: 1
-          },
-          {
-            key: 4,
-            category: '前端',
-            tag: 'html',
-            title: 'JavaScript的进阶之路',
-            agreeNum: 1024,
-            commentsNum: 1024,
-            readNum: 1024,
-            time: '2019-05-23',
-            status: 1
-          },
-          {
-            key: 5,
-            category: '前端',
-            tag: 'html',
-            title: 'JavaScript的进阶之路',
-            agreeNum: 1024,
-            commentsNum: 1024,
-            readNum: 1024,
-            time: '2019-05-23',
-            status: 0
-          }
-        ]
+        articleList: []
       }
     },
     methods: {
+      getArticleList() {
+        let queryObj = {
+          sort: this.articletype,
+          pageNum: this.currentPage
+        }
+        this.axios.get('/author/articleDto?sort='+this.articletype+'&pageNum='+this.currentPage).then(res => {
+          console.log(res)
+          if (res.data.code == 0) {
+            let data = res.data.data;
+            this.total = data.total;
+            this.articleList = data.list;
+            for (let i = 0; i < this.articleList.length; i++) {
+              this.articleList[i].key = this.articleList[i].articleId;
+            }
+          }
+        })
+      },
       addArticle() {
         let routeUrl = this.$router.resolve({
           path: "/mavonEditor",
+          query: {
+            id: 1
+          }
         });
         window.open(routeUrl.href, '_blank');
       },
@@ -192,12 +165,31 @@
         if (this.selectItem == null)
           this.$message.warn("请选择某一项");
         else {
+          let routeUrl = this.$router.resolve({
+            path: "/mavonEditor",
+            query: {
+              id: 2,
+              articleId:this.selectItem.articleId
+            }
 
+          });
+          window.open(routeUrl.href, '_blank');
         }
       },
       readArticle() {
         if (this.selectItem == null)
           this.$message.warn("请选择某一项");
+        else {
+          let routeUrl = this.$router.resolve({
+            path: "/mavonEditor",
+            query: {
+              id: 3,
+              articleId:this.selectItem.articleId
+            }
+
+          });
+          window.open(routeUrl.href, '_blank');
+        }
 
       },
       searchArticle() {
@@ -213,16 +205,28 @@
 
       },
       statusChange(index, id) {
-        if (this.articleList[index].status)
-          this.articleList[index].status = 0;
+        let state = 0;
+        if (this.articleList[index].state)
+          state = 0;
         else
-          this.articleList[index].status = 1;
+          state = 1;
+        let article = {
+          articleId: id,
+          state: state
+        };
+        this.axios.put('/author/articleDto', article).then(res => {
+          if (res.data.code == 0) {
+            this.articleList[index].state = state;
+            this.$message.success('修改成功!');
+          }
+        })
       },
       currentChange(current) {
         this.currentPage = current;
+        this.getArticleList();
       },
-      typeChange(e){
-        this.articletype = e.target.value;
+      typeChange(e) {
+        this.getArticleList();
       }
     },
 
@@ -242,7 +246,8 @@
   .operator {
     padding: 30px 0 0 60px;
   }
-  .sort-article{
+
+  .sort-article {
     padding: 20px 0 0 60px;
   }
 
@@ -284,7 +289,7 @@
 
   .page {
     position: absolute;
-    bottom: 30px;
+    bottom: 20px;
     right: 50px;
   }
 

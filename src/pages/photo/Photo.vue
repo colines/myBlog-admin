@@ -2,26 +2,26 @@
   <div class="content">
     <div class="photo">
       <div class="operator">
-        <a-radio-group defaultValue="0" buttonStyle="solid" v-model="photoType">
-          <a-radio-button :value="0">用户头像</a-radio-button>
-          <a-radio-button :value="1">文章图片</a-radio-button>
-          <a-radio-button :value="2">系统图片</a-radio-button>
+        <a-radio-group buttonStyle="solid" v-model="photoType" @change="getPhotoByDirId">
+          <a-radio-button :value="item.dirId" v-for="item in dirList" :key="item.dirId" v-if="item.dirId !=1">
+            {{item.dirName}}</a-radio-button>
         </a-radio-group>
       </div>
       <div class="photo-list">
-        <a-button type="primary" @click="showAddPhotoModal" :disabled="photoType == 1">
+        <a-button type="primary" @click="showAddPhotoModal" :disabled="photoType == 1133930737993527296">
           <span class="iconfont" style="padding: 0 5px 0 0">&#xe671;</span>上传图片
         </a-button>
         <ul>
-          <li v-for="item in photoList" :key="item.key">
+          <li v-for="(item,index) in photoList" :key="item.key">
             <a-card hoverable style="width: 139px;" class="card">
-              <img alt="example" :src="item.photoSrc" slot="cover" @click="showBigPhoto(item.photoSrc)"
+              <img alt="example" :src="item.imageUrl" slot="cover" @click="showBigPhoto(item.imageUrl)"
                 style="height: 139px;" />
               <a-card-meta title="" style="height: 20px;">
                 <template slot="description">
-                  <a-icon type="zoom-in" class="icon-margin" :class="photoType == 1 ? iconStyle :''"
-                    @click="showBigPhoto(item.photoSrc)" />
-                  <a-icon type="delete" class="icon-margin" v-show="photoType != 1" @click="delPhoto" />
+                  <a-icon type="zoom-in" class="icon-margin" :class="photoType == 1133930737993527296 ? iconStyle :''"
+                    @click="showBigPhoto(item.imageUrl)" />
+                  <a-icon type="delete" class="icon-margin" v-show="photoType != 1133930737993527296"
+                    @click="delPhoto(item.imageId,index)" />
                 </template>
               </a-card-meta>
             </a-card>
@@ -33,10 +33,11 @@
             <img :src="modalSrc" alt="">
           </div>
         </a-modal>
-        <a-modal title="上传图片" v-model="addPhotoModalVisible" class="photo-upload">
+        <a-modal title="上传图片" v-model="addPhotoModalVisible" class="photo-upload" @ok="uploadOk"
+          :afterClose="uploadCancel" cancelText="取消" okText="确认">
           <div class="photo-add">
-            <a-upload listType="picture-card" :fileList="fileList" @preview="handlePreview" @change="handleChange"
-              :remove="handleRemove" :beforeUpload="beforeUpload">
+            <a-upload listType="picture-card" :fileList="fileList" @preview="handlePreview" :remove="handleRemove"
+              :beforeUpload="beforeUpload" :multiple="true">
               <div v-if="fileList.length < 5">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
@@ -55,6 +56,9 @@
 </template>
 <script>
   export default {
+    created() {
+      this.getDir();
+    },
     data() {
       return {
         addPhotoModalVisible: false,
@@ -64,56 +68,50 @@
         photoType: 0,
         iconStyle: 'iconStyle',
         modalSrc: '',
-        photoColumns: [{
-            title: '图片',
-            dataIndex: 'photoSrc',
-            scopedSlots: {
-              customRender: 'photoSrc'
-            },
-          },
-          {
-            title: '操作',
-            dataIndex: 'delPhoto',
-            scopedSlots: {
-              customRender: 'delPhoto'
-            },
-          }
-        ],
-        photoList: [{
-            key: 0,
-            photoSrc: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847245157&di=7759375a127a14e399f1d16f56091786&imgtype=0&src=http%3A%2F%2Fstatic.tm51.com%2Favatar%2Fdefault%2Fheader%2F10136.jpg',
-          },
-          {
-            key: 1,
-            photoSrc: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847274811&di=998504ebcbddbb032f61f42873ba88ca&imgtype=0&src=http%3A%2F%2Fstatic.tm51.com%2Favatar%2Fdefault%2Fheader%2F10017.jpg',
-          },
-          {
-            key: 2,
-            photoSrc: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847245156&di=15ed35bdb6df6e10819814616825a04b&imgtype=0&src=http%3A%2F%2Fstatic.tm51.com%2Favatar%2Fdefault%2Fheader%2F10128.jpg'
-          },
-          {
-            key: 3,
-            photoSrc: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847245158&di=7d375f370cd1fa2eab45a3b59b0baa1c&imgtype=0&src=http%3A%2F%2Flkker-10041312.file.myqcloud.com%2FImages%2F201902%2FgVaG15512595824319.jpg'
-          },
-          {
-            key: 4,
-            photoSrc: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558847274809&di=89dfd773cd6ec0828f2744a0cd150b26&imgtype=0&src=http%3A%2F%2Fstatic.tm51.com%2Favatar%2Fdefault%2Fheader%2F10076.jpg'
-          },
-          {
-            key: 5,
-            photoSrc: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558854086454&di=d2fb48cf3172d71f675b17ea8a98e6f4&imgtype=0&src=http%3A%2F%2Fstatic.tm51.com%2Favatar%2Fdefault%2Fheader%2F10068.jpg'
-          },
-
-        ],
+        dirList: [],
+        photoList: [],
         fileList: [],
+        upLoadDelFlag: -1, //上传图片删除的标志
       }
     },
     methods: {
-      addPhoto() {
-        this.addPhotoModalVisible = true;
+      getDir() {
+        this.axios.get('/author/imageDto/dir').then(res => {
+          if (res.data.code == 0) {
+            this.dirList = res.data.data;
+            this.photoType = this.dirList[1].dirId;
+            this.getPhotoByDirId();
+          }
+        })
       },
-      delPhoto() {
+      getPhotoByDirId() {
+        
+        this.axios.put('/author/imageDto/dir',{dirId:1,state:1}).then(res=>{
+          console.log(res)
+        })
+        this.axios.get('/author/imageDto/image/' + this.photoType).then(res => {
+          let list = [];
+          if (res.data.code == 0) {
+            let data = res.data.data;
+            for (let i = 0, len = data.length; i < len; i++) {
+              if (data[i].state) {
+                let item = data[i]
+                list.push(item);
+              }
+            }
+            this.photoList = list;
+          }
 
+        })
+      },
+      delPhoto(imageId, index) {
+        this.axios.delete('/author/imageDto/image/' + imageId).then(res => {
+          if (res.data.code == 0) {
+            if (index != -1)
+              this.photoList.splice(index, 1);
+          }else
+            this.$message.error('删除失败');
+        })
       },
       showAddPhotoModal() {
         this.addPhotoModalVisible = true;
@@ -123,30 +121,63 @@
         this.modalSrc = photoSrc;
         this.photoVisible = true;
       },
-      handleChange({
-        fileList
-      }) {
-        console.log(fileList)
-        this.fileList = fileList
-      },
       handlePreview(file) {
-        console.log(file.url)
-        console.log(file.thumbUrl)
-        this.previewImage = file.url || file.thumbUrl
+        this.previewImage = file.url;
         this.previewVisible = true
       },
       handleCancel() {
         this.previewVisible = false
       },
-      handleRemove() {
-
+      handleRemove(item) {
+        this.delPhoto(item.uid,this.upLoadDelFlag);
+        for (let i = 0; i < this.fileList.length; i++) {
+          if (this.fileList[i].uid == item.uid) {
+            this.fileList.splice(i, 1);
+          }
+        }
+      },
+      uploadOk() {
+        this.addPhotoModalVisible = false;
+        this.fileList = [];
+        this.getPhotoByDirId();
+      },
+      uploadCancel() {
+        for (let i = 0; i < this.fileList.length; i++) {
+          this.delPhoto(this.fileList[i].uid,this.upLoadDelFlag);
+        }
+        this.fileList = [];
       },
       beforeUpload(file) {
-        console.log(this.fileList);
+        let param = new FormData();
+        param.append("file", file);
+        let config = {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        };
+        this.axios.post('/author/imageDto/image/' + this.photoType, param, config).then(res => {
+          let data = res.data;
+          if (data.code == 0) {
+            let item = {
+              uid: data.data.imageId,
+              status: 'done',
+              url: data.data.imageUrl
+            }
+            this.fileList.push(item);
+          }
+        })
         return false;
       },
-    },
-
+      debounce(fn, delay) {
+        let timeout = null
+        return function () {
+          if (timeout != null) {
+            clearTimeout(timeout)
+          }
+          timeout = setTimeout(fn, delay)
+        }
+      }
+    }
   }
 
 </script>
